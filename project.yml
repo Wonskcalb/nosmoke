@@ -13,13 +13,38 @@ targets:
   NoSmoke:
     type: application
     platform: iOS
-    sources: [NoSmoke]
+    sources: [NoSmoke, Shared]
+    dependencies:
+      - target: NoSmokeWidgets
+    entitlements:
+      path: NoSmoke/NoSmoke.entitlements
+      properties:
+        com.apple.security.application-groups: [group.fr.famelart.nosmoke]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: fr.famelart.nosmoke
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_CFBundleDisplayName: NoSmoke
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        CODE_SIGN_STYLE: Automatic
+  NoSmokeWidgets:
+    type: app-extension
+    platform: iOS
+    sources: [NoSmokeWidgets, Shared]
+    info:
+      path: NoSmokeWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: NoSmoke
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: NoSmokeWidgets/NoSmokeWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [group.fr.famelart.nosmoke]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: fr.famelart.nosmoke.widgets
         CODE_SIGN_STYLE: Automatic
   NoSmokeTests:
     type: bundle.unit-test

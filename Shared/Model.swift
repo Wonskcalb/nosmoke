@@ -26,17 +26,38 @@ struct Slip: Codable, Identifiable {
 }
 
 struct AppState: Codable {
-    var quitDate = Calendar.current.date(from: DateComponents(year: 2026, month: 11, day: 13, hour: 7, minute: 30))!
-    var plan = [PatchStep(mg: 14, days: 28), PatchStep(mg: 14, days: 28), PatchStep(mg: 7, days: 30)]
+    var onboarded: Bool?
+    var quitDate = Date()
+    var plan = defaultPlan(startingAt: 21)
     var patchHour = 8
     var patchMinute = 0
     var tabletCap = 12
-    var cigsPerDay = 12
-    var weeklySpend = 26.0
+    var cigsPerDay = 10
+    var weeklySpend = 20.0
     var patches: [PatchLog] = []
     var tablets: [Date] = []
     var cravings: [Craving] = []
     var slips: [Slip] = []
+}
+
+extension AppState {
+    var lastCig: Date { ([quitDate] + slips.map(\.date)).max()! }
+    var tabletsToday: [Date] { tablets.filter(Calendar.current.isDateInToday) }
+    var patchToday: PatchLog? { patches.last { Calendar.current.isDateInToday($0.date) } }
+    var nextSite: String { sites[((sites.firstIndex(of: patches.last?.site ?? "") ?? -1) + 1) % sites.count] }
+
+    func avoided(_ now: Date) -> Int {
+        max(0, Int(now.timeIntervalSince(quitDate) / 86400 * Double(cigsPerDay)) - slips.count)
+    }
+
+    func saved(_ now: Date) -> Double {
+        Double(avoided(now)) * weeklySpend / Double(cigsPerDay * 7)
+    }
+}
+
+/// Patch notices step down 21 → 14 → 7 mg, about four weeks each.
+func defaultPlan(startingAt mg: Int) -> [PatchStep] {
+    [21, 14, 7].filter { $0 <= mg }.map { PatchStep(mg: $0, days: 28) }
 }
 
 struct StepInfo: Equatable {
@@ -71,6 +92,8 @@ let milestones: [(TimeInterval, String)] = [
 ]
 
 let triggers = ["Café", "Après repas", "Stress", "Alcool", "Ennui", "Social", "Pause", "Conduite"]
+let intensityLabels = ["Légère", "Présente", "Bien là", "Forte", "Très forte"]
+let triggerIcons = ["Café": "cup.and.saucer", "Après repas": "fork.knife", "Stress": "bolt", "Alcool": "wineglass", "Ennui": "hourglass", "Social": "person.2", "Pause": "pause.circle", "Conduite": "car"]
 let sites = ["Bras gauche", "Bras droit", "Hanche gauche", "Hanche droite", "Dos gauche", "Dos droit"]
 
 func duration(_ t: TimeInterval) -> String {

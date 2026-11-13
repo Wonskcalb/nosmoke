@@ -2,31 +2,15 @@ import Foundation
 import UserNotifications
 
 final class Store: ObservableObject {
-    @Published var s: AppState { didSet { save() } }
+    @Published var s: AppState { didSet { Persistence.save(s) } }
     @Published var tab = 0
-    private let url = URL.documentsDirectory.appending(path: "state.json")
 
     init() {
+        s = Persistence.load()
         tab = UserDefaults.standard.integer(forKey: "tab")
-        s = (try? Data(contentsOf: url)).flatMap { try? JSONDecoder().decode(AppState.self, from: $0) } ?? AppState()
     }
 
-    private func save() {
-        try? JSONEncoder().encode(s).write(to: url, options: .atomic)
-    }
-
-    var lastCig: Date { ([s.quitDate] + s.slips.map(\.date)).max()! }
-    var tabletsToday: [Date] { s.tablets.filter(Calendar.current.isDateInToday) }
-    var patchToday: PatchLog? { s.patches.last { Calendar.current.isDateInToday($0.date) } }
-    var nextSite: String { sites[((sites.firstIndex(of: s.patches.last?.site ?? "") ?? -1) + 1) % sites.count] }
-
-    func avoided(_ now: Date) -> Int {
-        max(0, Int(now.timeIntervalSince(s.quitDate) / 86400 * Double(s.cigsPerDay)) - s.slips.count)
-    }
-
-    func saved(_ now: Date) -> Double {
-        Double(avoided(now)) * s.weeklySpend / Double(s.cigsPerDay * 7)
-    }
+    func reload() { s = Persistence.load() }
 
     func summary() -> String {
         let cal = Calendar.current
