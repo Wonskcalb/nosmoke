@@ -12,8 +12,8 @@ enum Persistence {
             .appending(path: "state.json")
     }
 
-    // devicectl can't reach App Group containers, so the app's own Documents keeps a mirror
-    // that can be backed up from the Mac and is imported when the group copy is missing.
+    // Fallback copy outside the App Group: if the group file is lost or unreadable,
+    // the state comes back from here instead of starting over.
     static let mirror = URL.documentsDirectory.appending(path: "state.json")
 
     static func load() -> AppState {
