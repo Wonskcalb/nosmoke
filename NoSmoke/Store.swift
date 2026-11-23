@@ -7,6 +7,7 @@ final class Store: ObservableObject {
 
     init() {
         s = Persistence.load()
+        if ![Persistence.url, Persistence.mirror].allSatisfy({ FileManager.default.fileExists(atPath: $0.path) }) { Persistence.save(s) }
         tab = UserDefaults.standard.integer(forKey: "tab")
     }
 

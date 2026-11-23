@@ -9,6 +9,7 @@ settings:
     GENERATE_INFOPLIST_FILE: YES
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: HH4W7S832V
 targets:
   NoSmoke:
     type: application
@@ -19,14 +20,17 @@ targets:
     entitlements:
       path: NoSmoke/NoSmoke.entitlements
       properties:
-        com.apple.security.application-groups: [group.fr.famelart.nosmoke]
+        com.apple.security.application-groups: [group.fr.famelart.nosmoketracker]
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: fr.famelart.nosmoke
+        PRODUCT_BUNDLE_IDENTIFIER: fr.famelart.nosmoketracker
+        TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_CFBundleDisplayName: NoSmoke
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         CODE_SIGN_STYLE: Automatic
   NoSmokeWidgets:
     type: app-extension
@@ -41,10 +45,11 @@ targets:
     entitlements:
       path: NoSmokeWidgets/NoSmokeWidgets.entitlements
       properties:
-        com.apple.security.application-groups: [group.fr.famelart.nosmoke]
+        com.apple.security.application-groups: [group.fr.famelart.nosmoketracker]
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: fr.famelart.nosmoke.widgets
+        PRODUCT_BUNDLE_IDENTIFIER: fr.famelart.nosmoketracker.widgets
+        TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGN_STYLE: Automatic
   NoSmokeTests:
     type: bundle.unit-test
@@ -54,7 +59,7 @@ targets:
       - target: NoSmoke
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: fr.famelart.nosmoke.tests
+        PRODUCT_BUNDLE_IDENTIFIER: fr.famelart.nosmoketracker.tests
 schemes:
   NoSmoke:
     build:
